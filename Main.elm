@@ -72,7 +72,14 @@ update msg model =
                     ( { model | sides = s, error = Just error }, Cmd.none )
 
         RollDice ->
-            ( model, Random.generate NewResult (rollDice model.num model.sides) )
+            ( model
+            , case (rollDice model.num model.sides) of
+                Just gen ->
+                    Random.generate NewResult gen
+
+                Nothing ->
+                    Cmd.none
+            )
 
         NewResult dice ->
             ( { model | roll = dice }, Cmd.none )
@@ -81,14 +88,14 @@ update msg model =
             Material.update Mdl msg_ model
 
 
-rollDice : String -> String -> Random.Generator (List Int)
+rollDice : String -> String -> Maybe (Random.Generator (List Int))
 rollDice num sides =
     case ( String.toInt num, String.toInt sides ) of
         ( Ok num, Ok sides ) ->
-            Random.list num (Random.int 1 sides)
+            Just (Random.list num (Random.int 1 sides))
 
         _ ->
-            Random.list 1 (Random.int 1 6)
+            Nothing
 
 
 
