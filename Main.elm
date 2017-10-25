@@ -35,6 +35,15 @@ type alias Model =
     }
 
 
+model : Model
+model =
+    Model [] "1" "6" Material.model Nothing
+
+
+
+-- UPDATE
+
+
 type Msg
     = NewNum String
     | NewSides String
@@ -43,25 +52,22 @@ type Msg
     | Mdl (Material.Msg Msg)
 
 
-
--- UPDATE
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-
         NewNum n ->
             case String.toInt n of
-                Ok _ -> 
+                Ok _ ->
                     ( { model | num = n, error = Nothing }, Cmd.none )
+
                 Err error ->
                     ( { model | num = n, error = Just error }, Cmd.none )
 
         NewSides s ->
             case String.toInt s of
-                Ok _ -> 
+                Ok _ ->
                     ( { model | sides = s, error = Nothing }, Cmd.none )
+
                 Err error ->
                     ( { model | sides = s, error = Just error }, Cmd.none )
 
@@ -77,12 +83,13 @@ update msg model =
 
 rollDice : String -> String -> Random.Generator (List Int)
 rollDice num sides =
-    case (String.toInt num, String.toInt sides) of
-        (Ok num, Ok sides) ->
+    case ( String.toInt num, String.toInt sides ) of
+        ( Ok num, Ok sides ) ->
             Random.list num (Random.int 1 sides)
+
         _ ->
-            Random.list 1 (Random.int 1 6)  
-    
+            Random.list 1 (Random.int 1 6)
+
 
 
 -- VIEW
@@ -90,6 +97,7 @@ rollDice num sides =
 
 type alias Mdl =
     Material.Model
+
 
 view : Model -> Html Msg
 view model =
@@ -100,26 +108,28 @@ view model =
             { header = [ h3 [ style [ ( "padding", "2rem" ) ] ] [ text "Die Roller" ] ]
             , drawer = []
             , tabs = ( [], [] )
-            , main = [ viewBody model ]}
+            , main = [ viewBody model ]
+            }
 
 
 viewBody : Model -> Html Msg
 viewBody model =
-    div [ style [("padding", "2rem")] ]
-        [ div  []
+    div [ style [ ( "padding", "2rem" ) ] ]
+        [ div []
             [ numberField model 0 NewNum "Num" model.num
             , numberField model 1 NewSides "Sides" model.sides
-            , Button.render Mdl [2] model.mdl
+            , Button.render Mdl
+                [ 2 ]
+                model.mdl
                 [ Button.raised
                 , Button.colored
                 , Options.onClick RollDice
                 , Button.disabled |> Options.when (not (model.error == Nothing))
                 ]
-                [ text "Roll Dice"]
+                [ text "Roll Dice" ]
             ]
         , div []
-            [
-                text ("Roll: " ++ toString model.roll ++ "  Total: " ++ toString (List.foldl (+) 0 model.roll))
+            [ text ("Roll: " ++ toString model.roll ++ "  Total: " ++ toString (List.foldl (+) 0 model.roll))
             ]
         ]
         |> Material.Scheme.top
@@ -127,14 +137,17 @@ viewBody model =
 
 numberField : Model -> Int -> (String -> Msg) -> String -> String -> Html Msg
 numberField model idNum msg lbl val =
-    Textfield.render Mdl [idNum] model.mdl
-        [ Options.onInput msg 
+    Textfield.render Mdl
+        [ idNum ]
+        model.mdl
+        [ Options.onInput msg
         , Textfield.label lbl
         , Textfield.floatingLabel
         , Textfield.text_
         , Textfield.value val
         ]
         []
+
 
 
 -- SUBSCRIPTIONS
@@ -151,4 +164,4 @@ subscriptions model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model [] "1" "6" Material.model Nothing, Cmd.none )
+    ( model, Cmd.none )
