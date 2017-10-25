@@ -6,6 +6,7 @@ import Random
 import String
 import Material
 import Material.Scheme
+import Material.Icon as Icon
 import Material.Layout as Layout
 import Material.Textfield as Textfield
 import Material.Button as Button
@@ -130,16 +131,18 @@ viewBody model =
                 model.mdl
                 [ Button.raised
                 , Button.colored
+                , Button.ripple
                 , Options.onClick RollDice
                 , Button.disabled |> Options.when (not (model.error == Nothing))
                 ]
-                [ text "Roll Dice" ]
+                [ Icon.i "casino"
+                , text "  Roll Dice" ]
             ]
         , div []
             [ text ("Roll: " ++ toString model.roll ++ "  Total: " ++ toString (List.foldl (+) 0 model.roll))
             ]
         ]
-        |> Material.Scheme.top
+        |> Material.Scheme.top 
 
 
 numberField : Model -> Int -> (String -> Msg) -> String -> String -> Html Msg
