@@ -6,6 +6,7 @@ import Random
 import String
 import Material
 import Material.Scheme
+import Material.List as Lists
 import Material.Icon as Icon
 import Material.Layout as Layout
 import Material.Textfield as Textfield
@@ -26,9 +27,13 @@ main =
 
 -- MODEL
 
+type alias Roll =
+    { roll : List Int
+    , total : Int }
+
 
 type alias Model =
-    { roll : List Int
+    { rolls : List Roll
     , num : String
     , sides : String
     , mdl : Material.Model
@@ -49,7 +54,7 @@ type Msg
     = NewNum String
     | NewSides String
     | RollDice
-    | NewResult (List Int)
+    | NewResult Roll
     | Mdl (Material.Msg Msg)
 
 
@@ -82,18 +87,22 @@ update msg model =
                     Cmd.none
             )
 
-        NewResult dice ->
-            ( { model | roll = dice }, Cmd.none )
+        NewResult roll ->
+            ( { model | rolls = roll :: model.rolls }, Cmd.none )
 
         Mdl msg_ ->
             Material.update Mdl msg_ model
 
 
-rollDice : String -> String -> Maybe (Random.Generator (List Int))
+rollDice : String -> String -> Maybe (Random.Generator Roll)
 rollDice num sides =
     case ( String.toInt num, String.toInt sides ) of
         ( Ok num, Ok sides ) ->
-            Just (Random.list num (Random.int 1 sides))
+            let 
+                roll = Random.list num (Random.int 1 sides)
+                gen = Random.map (\l -> Roll l (List.foldl (+) 0 l)) roll
+            in 
+                Just gen
 
         _ ->
             Nothing
@@ -138,9 +147,11 @@ viewBody model =
                 [ Icon.i "casino"
                 , text "  Roll Dice" ]
             ]
-        , div []
-            [ text ("Roll: " ++ toString model.roll ++ "  Total: " ++ toString (List.foldl (+) 0 model.roll))
-            ]
+        , Lists.ul []
+            (List.map (\r -> Lists.li [] 
+                                [ Lists.content [] [ text (toString r.roll) ]
+                                , Lists.content2 [] [ text (toString r.total) ]]) 
+             model.rolls)
         ]
         |> Material.Scheme.top 
 
