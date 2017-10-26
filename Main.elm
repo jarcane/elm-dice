@@ -6,6 +6,7 @@ import Random
 import String
 import Material
 import Material.Scheme
+import Material.Grid as Grid
 import Material.List as Lists
 import Material.Icon as Icon
 import Material.Layout as Layout
@@ -132,26 +133,28 @@ view model =
 viewBody : Model -> Html Msg
 viewBody model =
     div [ style [ ( "padding", "2rem" ) ] ]
-        [ div []
-            [ numberField model 0 NewNum "Num" model.num
-            , numberField model 1 NewSides "Sides" model.sides
-            , Button.render Mdl
-                [ 2 ]
-                model.mdl
-                [ Button.raised
-                , Button.colored
-                , Button.ripple
-                , Options.onClick RollDice
-                , Button.disabled |> Options.when (not (model.error == Nothing))
+        [ Grid.grid []
+            [ Grid.cell [] 
+                [ numberField model 0 NewNum "Num" model.num
+                , numberField model 1 NewSides "Sides" model.sides
+                , Button.render Mdl
+                    [ 2 ]
+                    model.mdl
+                    [ Button.raised
+                    , Button.colored
+                    , Button.ripple
+                    , Options.onClick RollDice
+                    , Button.disabled |> Options.when (not (model.error == Nothing))
+                    ]
+                    [ Icon.i "casino"
+                    , text "  Roll Dice" ]
                 ]
-                [ Icon.i "casino"
-                , text "  Roll Dice" ]
-            ]
-        , Lists.ul []
-            (List.map (\r -> Lists.li [] 
-                                [ Lists.content [] [ text (toString r.roll) ]
-                                , Lists.content2 [] [ text (toString r.total) ]]) 
-             model.rolls)
+            , Grid.cell [] 
+                [ Lists.ul []
+                    (List.map (\r -> Lists.li [] 
+                                        [ Lists.content [] [ text (toString r.roll) ]
+                                        , Lists.content2 [] [ text (toString r.total) ]]) 
+                    model.rolls)]]
         ]
         |> Material.Scheme.top 
 
