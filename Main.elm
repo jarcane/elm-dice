@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Random
 import String
+import String.Format exposing (..)
 import Material
 import Material.Scheme
 import Material.Grid as Grid
@@ -30,7 +31,9 @@ main =
 
 type alias Roll =
     { roll : List Int
-    , total : Int }
+    , total : Int
+    , num : Int
+    , sides : Int }
 
 
 type alias Model =
@@ -101,7 +104,7 @@ rollDice num sides =
         ( Ok num, Ok sides ) ->
             let 
                 roll = Random.list num (Random.int 1 sides)
-                gen = Random.map (\l -> Roll l (List.foldl (+) 0 l)) roll
+                gen = Random.map (\l -> Roll l (List.foldl (+) 0 l) num sides) roll
             in 
                 Just gen
 
@@ -152,7 +155,7 @@ viewBody model =
             , Grid.cell [] 
                 [ Lists.ul []
                     (List.map (\r -> Lists.li [] 
-                                        [ Lists.content [] [ text (toString r.roll) ]
+                                        [ Lists.content [] [ text (format3 "{1}d{2}: {3}" (r.num, r.sides, r.roll)) ]
                                         , Lists.content2 [] [ text (toString r.total) ]]) 
                     model.rolls)]]
         ]
