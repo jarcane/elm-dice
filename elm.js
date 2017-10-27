@@ -15263,6 +15263,411 @@ var _debois$elm_mdl$Material_Color$primaryContrast = _debois$elm_mdl$Material_Co
 var _debois$elm_mdl$Material_Color$accent = _debois$elm_mdl$Material_Color$C('accent');
 var _debois$elm_mdl$Material_Color$accentContrast = _debois$elm_mdl$Material_Color$C('accent-contrast');
 
+//import Maybe, Native.List //
+
+var _elm_lang$core$Native_Regex = function() {
+
+function escape(str)
+{
+	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+function caseInsensitive(re)
+{
+	return new RegExp(re.source, 'gi');
+}
+function regex(raw)
+{
+	return new RegExp(raw, 'g');
+}
+
+function contains(re, string)
+{
+	return string.match(re) !== null;
+}
+
+function find(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var out = [];
+	var number = 0;
+	var string = str;
+	var lastIndex = re.lastIndex;
+	var prevLastIndex = -1;
+	var result;
+	while (number++ < n && (result = re.exec(string)))
+	{
+		if (prevLastIndex === re.lastIndex) break;
+		var i = result.length - 1;
+		var subs = new Array(i);
+		while (i > 0)
+		{
+			var submatch = result[i];
+			subs[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		out.push({
+			match: result[0],
+			submatches: _elm_lang$core$Native_List.fromArray(subs),
+			index: result.index,
+			number: number
+		});
+		prevLastIndex = re.lastIndex;
+	}
+	re.lastIndex = lastIndex;
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+function replace(n, re, replacer, string)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var count = 0;
+	function jsReplacer(match)
+	{
+		if (count++ >= n)
+		{
+			return match;
+		}
+		var i = arguments.length - 3;
+		var submatches = new Array(i);
+		while (i > 0)
+		{
+			var submatch = arguments[i];
+			submatches[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		return replacer({
+			match: match,
+			submatches: _elm_lang$core$Native_List.fromArray(submatches),
+			index: arguments[arguments.length - 2],
+			number: count
+		});
+	}
+	return string.replace(re, jsReplacer);
+}
+
+function split(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	if (n === Infinity)
+	{
+		return _elm_lang$core$Native_List.fromArray(str.split(re));
+	}
+	var string = str;
+	var result;
+	var out = [];
+	var start = re.lastIndex;
+	var restoreLastIndex = re.lastIndex;
+	while (n--)
+	{
+		if (!(result = re.exec(string))) break;
+		out.push(string.slice(start, result.index));
+		start = re.lastIndex;
+	}
+	out.push(string.slice(start));
+	re.lastIndex = restoreLastIndex;
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+return {
+	regex: regex,
+	caseInsensitive: caseInsensitive,
+	escape: escape,
+
+	contains: F2(contains),
+	find: F3(find),
+	replace: F4(replace),
+	split: F3(split)
+};
+
+}();
+
+var _elm_lang$core$Regex$split = _elm_lang$core$Native_Regex.split;
+var _elm_lang$core$Regex$replace = _elm_lang$core$Native_Regex.replace;
+var _elm_lang$core$Regex$find = _elm_lang$core$Native_Regex.find;
+var _elm_lang$core$Regex$contains = _elm_lang$core$Native_Regex.contains;
+var _elm_lang$core$Regex$caseInsensitive = _elm_lang$core$Native_Regex.caseInsensitive;
+var _elm_lang$core$Regex$regex = _elm_lang$core$Native_Regex.regex;
+var _elm_lang$core$Regex$escape = _elm_lang$core$Native_Regex.escape;
+var _elm_lang$core$Regex$Match = F4(
+	function (a, b, c, d) {
+		return {match: a, submatches: b, index: c, number: d};
+	});
+var _elm_lang$core$Regex$Regex = {ctor: 'Regex'};
+var _elm_lang$core$Regex$AtMost = function (a) {
+	return {ctor: 'AtMost', _0: a};
+};
+var _elm_lang$core$Regex$All = {ctor: 'All'};
+
+var _debois$elm_mdl$Material_Grid$clip = F3(
+	function (lower, upper, k) {
+		return A2(
+			_elm_lang$core$Basics$max,
+			lower,
+			A2(_elm_lang$core$Basics$min, k, upper));
+	});
+var _debois$elm_mdl$Material_Grid$stretch = _debois$elm_mdl$Material_Options$cs('mdl-cell--stretch');
+var _debois$elm_mdl$Material_Grid$align = function (a) {
+	var _p0 = a;
+	switch (_p0.ctor) {
+		case 'Top':
+			return _debois$elm_mdl$Material_Options$cs('mdl-cell--top');
+		case 'Middle':
+			return _debois$elm_mdl$Material_Options$cs('mdl-cell--middle');
+		default:
+			return _debois$elm_mdl$Material_Options$cs('mdl-cell--bottom');
+	}
+};
+var _debois$elm_mdl$Material_Grid$suffix = function (device) {
+	var _p1 = device;
+	switch (_p1.ctor) {
+		case 'All':
+			return '';
+		case 'Desktop':
+			return '-desktop';
+		case 'Tablet':
+			return '-tablet';
+		default:
+			return '-phone';
+	}
+};
+var _debois$elm_mdl$Material_Grid$size = F2(
+	function (device, k) {
+		var c = function () {
+			var _p2 = device;
+			switch (_p2.ctor) {
+				case 'All':
+					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 12, k);
+				case 'Desktop':
+					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 12, k);
+				case 'Tablet':
+					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 8, k);
+				default:
+					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 4, k);
+			}
+		}();
+		return _debois$elm_mdl$Material_Options$cs(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'mdl-cell--',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(c),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'-col',
+						_debois$elm_mdl$Material_Grid$suffix(device)))));
+	});
+var _debois$elm_mdl$Material_Grid$offset = F2(
+	function (device, k) {
+		var c = function () {
+			var _p3 = device;
+			switch (_p3.ctor) {
+				case 'All':
+					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 11, k);
+				case 'Desktop':
+					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 11, k);
+				case 'Tablet':
+					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 7, k);
+				default:
+					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 3, k);
+			}
+		}();
+		return _debois$elm_mdl$Material_Options$cs(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'mdl-cell--',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(c),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'-offset',
+						_debois$elm_mdl$Material_Grid$suffix(device)))));
+	});
+var _debois$elm_mdl$Material_Grid$hide = function (device) {
+	return _debois$elm_mdl$Material_Options$cs(
+		function () {
+			var _p4 = device;
+			if (_p4.ctor === 'All') {
+				return '';
+			} else {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'mdl-cell--hide-',
+					_debois$elm_mdl$Material_Grid$suffix(device));
+			}
+		}());
+};
+var _debois$elm_mdl$Material_Grid$order = F2(
+	function (device, n) {
+		return _debois$elm_mdl$Material_Options$cs(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'mdl-cell--order-',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						A3(_debois$elm_mdl$Material_Grid$clip, 1, 12, n)),
+					_debois$elm_mdl$Material_Grid$suffix(device))));
+	});
+var _debois$elm_mdl$Material_Grid$grid = F2(
+	function (styling, cells) {
+		return A2(
+			_debois$elm_mdl$Material_Options$div,
+			{
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Options$cs('mdl-grid'),
+				_1: styling
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (_p5) {
+					var _p6 = _p5;
+					return _p6._0;
+				},
+				cells));
+	});
+var _debois$elm_mdl$Material_Grid$maxWidth = function (w) {
+	return A2(_debois$elm_mdl$Material_Options$css, 'max-width', w);
+};
+var _debois$elm_mdl$Material_Grid$noSpacing = _debois$elm_mdl$Material_Options$cs('mdl-grid--no-spacing');
+var _debois$elm_mdl$Material_Grid$Phone = {ctor: 'Phone'};
+var _debois$elm_mdl$Material_Grid$Tablet = {ctor: 'Tablet'};
+var _debois$elm_mdl$Material_Grid$Desktop = {ctor: 'Desktop'};
+var _debois$elm_mdl$Material_Grid$All = {ctor: 'All'};
+var _debois$elm_mdl$Material_Grid$Cell = function (a) {
+	return {ctor: 'Cell', _0: a};
+};
+var _debois$elm_mdl$Material_Grid$cell = F2(
+	function (styling, elms) {
+		return _debois$elm_mdl$Material_Grid$Cell(
+			A2(
+				_debois$elm_mdl$Material_Options$div,
+				{
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Options$cs('mdl-cell'),
+					_1: styling
+				},
+				elms));
+	});
+var _debois$elm_mdl$Material_Grid$Bottom = {ctor: 'Bottom'};
+var _debois$elm_mdl$Material_Grid$Middle = {ctor: 'Middle'};
+var _debois$elm_mdl$Material_Grid$Top = {ctor: 'Top'};
+
+var _debois$elm_mdl$Material_List$action2 = _debois$elm_mdl$Material_Options$cs('mdl-list__item-secondary-action');
+var _debois$elm_mdl$Material_List$info2 = function (options) {
+	return _debois$elm_mdl$Material_Options$span(
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-list__item-secondary-info'),
+			_1: options
+		});
+};
+var _debois$elm_mdl$Material_List$content2 = function (options) {
+	return _debois$elm_mdl$Material_Options$span(
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-list__item-secondary-content'),
+			_1: options
+		});
+};
+var _debois$elm_mdl$Material_List$subtitle = function (options) {
+	return _debois$elm_mdl$Material_Options$span(
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-list__item-sub-title'),
+			_1: options
+		});
+};
+var _debois$elm_mdl$Material_List$body = function (options) {
+	return _debois$elm_mdl$Material_Options$span(
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-list__item-text-body'),
+			_1: options
+		});
+};
+var _debois$elm_mdl$Material_List$icon = F2(
+	function (i, options) {
+		return A2(
+			_debois$elm_mdl$Material_Icon$view,
+			i,
+			{
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Options$cs('mdl-list__item-icon'),
+				_1: options
+			});
+	});
+var _debois$elm_mdl$Material_List$avatar = _debois$elm_mdl$Material_Options$cs('mdl-list__item-avatar');
+var _debois$elm_mdl$Material_List$avatarImage = F2(
+	function (src, options) {
+		return A4(
+			_debois$elm_mdl$Material_Options$styled_,
+			_elm_lang$html$Html$img,
+			{ctor: '::', _0: _debois$elm_mdl$Material_List$avatar, _1: options},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$src(src),
+				_1: {ctor: '[]'}
+			},
+			{ctor: '[]'});
+	});
+var _debois$elm_mdl$Material_List$avatarIcon = F2(
+	function (i, options) {
+		return A2(
+			_debois$elm_mdl$Material_Options$div,
+			{
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Options$center,
+				_1: {
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Options$many(options),
+					_1: {
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_List$avatar,
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Icon$i(i),
+				_1: {ctor: '[]'}
+			});
+	});
+var _debois$elm_mdl$Material_List$content = function (options) {
+	return _debois$elm_mdl$Material_Options$span(
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-list__item-primary-content'),
+			_1: options
+		});
+};
+var _debois$elm_mdl$Material_List$withSubtitle = _debois$elm_mdl$Material_Options$cs('mdl-list__item--two-line');
+var _debois$elm_mdl$Material_List$withBody = _debois$elm_mdl$Material_Options$cs('mdl-list__item--three-line');
+var _debois$elm_mdl$Material_List$li = function (options) {
+	return A2(
+		_debois$elm_mdl$Material_Options$styled,
+		_elm_lang$html$Html$li,
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-list__item'),
+			_1: options
+		});
+};
+var _debois$elm_mdl$Material_List$ul = function (options) {
+	return A2(
+		_debois$elm_mdl$Material_Options$styled,
+		_elm_lang$html$Html$ul,
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-list'),
+			_1: options
+		});
+};
+
 var _debois$elm_mdl$Material_Scheme$scheme = F2(
 	function (primary, accent) {
 		return A2(
@@ -15704,9 +16109,156 @@ var _elm_lang$core$Random$cmdMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Random'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Random$init, onEffects: _elm_lang$core$Random$onEffects, onSelfMsg: _elm_lang$core$Random$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Random$cmdMap};
 
+var _nathanfox$elm_string_format$String_Format$convert = function (val) {
+	var str = _elm_lang$core$Basics$toString(val);
+	return (A2(_elm_lang$core$String$startsWith, '\"', str) && A2(_elm_lang$core$String$endsWith, '\"', str)) ? A2(
+		_elm_lang$core$String$dropRight,
+		1,
+		A2(_elm_lang$core$String$dropLeft, 1, str)) : str;
+};
+var _nathanfox$elm_string_format$String_Format$replaceFormat = F3(
+	function (fmt, position, val) {
+		return A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			_elm_lang$core$Regex$regex(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'\\{',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(position),
+						'\\}'))),
+			function (_p0) {
+				return _nathanfox$elm_string_format$String_Format$convert(val);
+			},
+			fmt);
+	});
+var _nathanfox$elm_string_format$String_Format$format1 = F2(
+	function (fmt, val) {
+		return A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 1, val);
+	});
+var _nathanfox$elm_string_format$String_Format$format2 = F2(
+	function (fmt, tuple) {
+		var _p1 = tuple;
+		var first = _p1._0;
+		var second = _p1._1;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 2, second);
+		return A2(_nathanfox$elm_string_format$String_Format$format1, fmt_, first);
+	});
+var _nathanfox$elm_string_format$String_Format$format3 = F2(
+	function (fmt, tuple) {
+		var _p2 = tuple;
+		var first = _p2._0;
+		var second = _p2._1;
+		var third = _p2._2;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 3, third);
+		return A2(
+			_nathanfox$elm_string_format$String_Format$format2,
+			fmt_,
+			{ctor: '_Tuple2', _0: first, _1: second});
+	});
+var _nathanfox$elm_string_format$String_Format$format4 = F2(
+	function (fmt, tuple) {
+		var _p3 = tuple;
+		var first = _p3._0;
+		var second = _p3._1;
+		var third = _p3._2;
+		var fourth = _p3._3;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 4, fourth);
+		return A2(
+			_nathanfox$elm_string_format$String_Format$format3,
+			fmt_,
+			{ctor: '_Tuple3', _0: first, _1: second, _2: third});
+	});
+var _nathanfox$elm_string_format$String_Format$format5 = F2(
+	function (fmt, tuple) {
+		var _p4 = tuple;
+		var first = _p4._0;
+		var second = _p4._1;
+		var third = _p4._2;
+		var fourth = _p4._3;
+		var fifth = _p4._4;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 5, fifth);
+		return A2(
+			_nathanfox$elm_string_format$String_Format$format4,
+			fmt_,
+			{ctor: '_Tuple4', _0: first, _1: second, _2: third, _3: fourth});
+	});
+var _nathanfox$elm_string_format$String_Format$format6 = F2(
+	function (fmt, tuple) {
+		var _p5 = tuple;
+		var first = _p5._0;
+		var second = _p5._1;
+		var third = _p5._2;
+		var fourth = _p5._3;
+		var fifth = _p5._4;
+		var sixth = _p5._5;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 6, sixth);
+		return A2(
+			_nathanfox$elm_string_format$String_Format$format5,
+			fmt_,
+			{ctor: '_Tuple5', _0: first, _1: second, _2: third, _3: fourth, _4: fifth});
+	});
+var _nathanfox$elm_string_format$String_Format$format7 = F2(
+	function (fmt, tuple) {
+		var _p6 = tuple;
+		var first = _p6._0;
+		var second = _p6._1;
+		var third = _p6._2;
+		var fourth = _p6._3;
+		var fifth = _p6._4;
+		var sixth = _p6._5;
+		var seventh = _p6._6;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 7, seventh);
+		return A2(
+			_nathanfox$elm_string_format$String_Format$format6,
+			fmt_,
+			{ctor: '_Tuple6', _0: first, _1: second, _2: third, _3: fourth, _4: fifth, _5: sixth});
+	});
+var _nathanfox$elm_string_format$String_Format$format8 = F2(
+	function (fmt, tuple) {
+		var _p7 = tuple;
+		var first = _p7._0;
+		var second = _p7._1;
+		var third = _p7._2;
+		var fourth = _p7._3;
+		var fifth = _p7._4;
+		var sixth = _p7._5;
+		var seventh = _p7._6;
+		var eighth = _p7._7;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 8, eighth);
+		return A2(
+			_nathanfox$elm_string_format$String_Format$format7,
+			fmt_,
+			{ctor: '_Tuple7', _0: first, _1: second, _2: third, _3: fourth, _4: fifth, _5: sixth, _6: seventh});
+	});
+var _nathanfox$elm_string_format$String_Format$format9 = F2(
+	function (fmt, tuple) {
+		var _p8 = tuple;
+		var first = _p8._0;
+		var second = _p8._1;
+		var third = _p8._2;
+		var fourth = _p8._3;
+		var fifth = _p8._4;
+		var sixth = _p8._5;
+		var seventh = _p8._6;
+		var eighth = _p8._7;
+		var ninth = _p8._8;
+		var fmt_ = A3(_nathanfox$elm_string_format$String_Format$replaceFormat, fmt, 9, ninth);
+		return A2(
+			_nathanfox$elm_string_format$String_Format$format8,
+			fmt_,
+			{ctor: '_Tuple8', _0: first, _1: second, _2: third, _3: fourth, _4: fifth, _5: sixth, _6: seventh, _7: eighth});
+	});
+
 var _jarcane$elm_dice$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
+var _jarcane$elm_dice$Main$Roll = F4(
+	function (a, b, c, d) {
+		return {roll: a, total: b, num: c, sides: d};
+	});
 var _jarcane$elm_dice$Main$rollDice = F2(
 	function (num, sides) {
 		var _p0 = {
@@ -15715,18 +16267,38 @@ var _jarcane$elm_dice$Main$rollDice = F2(
 			_1: _elm_lang$core$String$toInt(sides)
 		};
 		if (((_p0.ctor === '_Tuple2') && (_p0._0.ctor === 'Ok')) && (_p0._1.ctor === 'Ok')) {
-			return _elm_lang$core$Maybe$Just(
-				A2(
-					_elm_lang$core$Random$list,
-					_p0._0._0,
-					A2(_elm_lang$core$Random$int, 1, _p0._1._0)));
+			var _p2 = _p0._1._0;
+			var _p1 = _p0._0._0;
+			var roll = A2(
+				_elm_lang$core$Random$list,
+				_p1,
+				A2(_elm_lang$core$Random$int, 1, _p2));
+			var gen = A2(
+				_elm_lang$core$Random$map,
+				function (l) {
+					return A4(
+						_jarcane$elm_dice$Main$Roll,
+						l,
+						A3(
+							_elm_lang$core$List$foldl,
+							F2(
+								function (x, y) {
+									return x + y;
+								}),
+							0,
+							l),
+						_p1,
+						_p2);
+				},
+				roll);
+			return _elm_lang$core$Maybe$Just(gen);
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
 var _jarcane$elm_dice$Main$Model = F5(
 	function (a, b, c, d, e) {
-		return {roll: a, num: b, sides: c, mdl: d, error: e};
+		return {rolls: a, num: b, sides: c, mdl: d, error: e};
 	});
 var _jarcane$elm_dice$Main$model = A5(
 	_jarcane$elm_dice$Main$Model,
@@ -15778,40 +16350,17 @@ var _jarcane$elm_dice$Main$NewResult = function (a) {
 };
 var _jarcane$elm_dice$Main$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'NewNum':
-				var _p3 = _p1._0;
-				var _p2 = _elm_lang$core$String$toInt(_p3);
-				if (_p2.ctor === 'Ok') {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{num: _p3, error: _elm_lang$core$Maybe$Nothing}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								num: _p3,
-								error: _elm_lang$core$Maybe$Just(_p2._0)
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				}
-			case 'NewSides':
-				var _p5 = _p1._0;
+				var _p5 = _p3._0;
 				var _p4 = _elm_lang$core$String$toInt(_p5);
 				if (_p4.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{sides: _p5, error: _elm_lang$core$Maybe$Nothing}),
+							{num: _p5, error: _elm_lang$core$Maybe$Nothing}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -15820,8 +16369,31 @@ var _jarcane$elm_dice$Main$update = F2(
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								sides: _p5,
+								num: _p5,
 								error: _elm_lang$core$Maybe$Just(_p4._0)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'NewSides':
+				var _p7 = _p3._0;
+				var _p6 = _elm_lang$core$String$toInt(_p7);
+				if (_p6.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{sides: _p7, error: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								sides: _p7,
+								error: _elm_lang$core$Maybe$Just(_p6._0)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
@@ -15831,9 +16403,9 @@ var _jarcane$elm_dice$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: model,
 					_1: function () {
-						var _p6 = A2(_jarcane$elm_dice$Main$rollDice, model.num, model.sides);
-						if (_p6.ctor === 'Just') {
-							return A2(_elm_lang$core$Random$generate, _jarcane$elm_dice$Main$NewResult, _p6._0);
+						var _p8 = A2(_jarcane$elm_dice$Main$rollDice, model.num, model.sides);
+						if (_p8.ctor === 'Just') {
+							return A2(_elm_lang$core$Random$generate, _jarcane$elm_dice$Main$NewResult, _p8._0);
 						} else {
 							return _elm_lang$core$Platform_Cmd$none;
 						}
@@ -15844,11 +16416,13 @@ var _jarcane$elm_dice$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{roll: _p1._0}),
+						{
+							rolls: {ctor: '::', _0: _p3._0, _1: model.rolls}
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				return A3(_debois$elm_mdl$Material$update, _jarcane$elm_dice$Main$Mdl, _p1._0, model);
+				return A3(_debois$elm_mdl$Material$update, _jarcane$elm_dice$Main$Mdl, _p3._0, model);
 		}
 	});
 var _jarcane$elm_dice$Main$RollDice = {ctor: 'RollDice'};
@@ -15875,92 +16449,127 @@ var _jarcane$elm_dice$Main$viewBody = function (model) {
 			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$div,
+					_debois$elm_mdl$Material_Grid$grid,
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: A5(_jarcane$elm_dice$Main$numberField, model, 0, _jarcane$elm_dice$Main$NewNum, 'Num', model.num),
-						_1: {
-							ctor: '::',
-							_0: A5(_jarcane$elm_dice$Main$numberField, model, 1, _jarcane$elm_dice$Main$NewSides, 'Sides', model.sides),
-							_1: {
+						_0: A2(
+							_debois$elm_mdl$Material_Grid$cell,
+							{
 								ctor: '::',
-								_0: A5(
-									_debois$elm_mdl$Material_Button$render,
-									_jarcane$elm_dice$Main$Mdl,
-									{
+								_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A5(_jarcane$elm_dice$Main$numberField, model, 0, _jarcane$elm_dice$Main$NewNum, 'Num', model.num),
+								_1: {
+									ctor: '::',
+									_0: A5(_jarcane$elm_dice$Main$numberField, model, 1, _jarcane$elm_dice$Main$NewSides, 'Sides', model.sides),
+									_1: {
 										ctor: '::',
-										_0: 2,
-										_1: {ctor: '[]'}
-									},
-									model.mdl,
-									{
-										ctor: '::',
-										_0: _debois$elm_mdl$Material_Button$raised,
-										_1: {
-											ctor: '::',
-											_0: _debois$elm_mdl$Material_Button$colored,
-											_1: {
+										_0: A5(
+											_debois$elm_mdl$Material_Button$render,
+											_jarcane$elm_dice$Main$Mdl,
+											{
 												ctor: '::',
-												_0: _debois$elm_mdl$Material_Button$ripple,
+												_0: 2,
+												_1: {ctor: '[]'}
+											},
+											model.mdl,
+											{
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$raised,
 												_1: {
 													ctor: '::',
-													_0: _debois$elm_mdl$Material_Options$onClick(_jarcane$elm_dice$Main$RollDice),
+													_0: _debois$elm_mdl$Material_Button$colored,
 													_1: {
 														ctor: '::',
-														_0: A2(
-															_debois$elm_mdl$Material_Options$when,
-															!_elm_lang$core$Native_Utils.eq(model.error, _elm_lang$core$Maybe$Nothing),
-															_debois$elm_mdl$Material_Button$disabled),
-														_1: {ctor: '[]'}
+														_0: _debois$elm_mdl$Material_Button$ripple,
+														_1: {
+															ctor: '::',
+															_0: _debois$elm_mdl$Material_Options$onClick(_jarcane$elm_dice$Main$RollDice),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_debois$elm_mdl$Material_Options$when,
+																	!_elm_lang$core$Native_Utils.eq(model.error, _elm_lang$core$Maybe$Nothing),
+																	_debois$elm_mdl$Material_Button$disabled),
+																_1: {ctor: '[]'}
+															}
+														}
 													}
 												}
-											}
-										}
-									},
-									{
-										ctor: '::',
-										_0: _debois$elm_mdl$Material_Icon$i('casino'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('  Roll Dice'),
-											_1: {ctor: '[]'}
-										}
-									}),
-								_1: {ctor: '[]'}
-							}
+											},
+											{
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Icon$i('casino'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('  Roll Dice'),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_debois$elm_mdl$Material_Grid$cell,
+								{
+									ctor: '::',
+									_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 6),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_debois$elm_mdl$Material_List$ul,
+										{ctor: '[]'},
+										A2(
+											_elm_lang$core$List$map,
+											function (r) {
+												return A2(
+													_debois$elm_mdl$Material_List$li,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_debois$elm_mdl$Material_List$content,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text(
+																	A2(
+																		_nathanfox$elm_string_format$String_Format$format3,
+																		'{1}d{2}: {3}',
+																		{ctor: '_Tuple3', _0: r.num, _1: r.sides, _2: r.roll})),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_debois$elm_mdl$Material_List$content2,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(
+																		_elm_lang$core$Basics$toString(r.total)),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														}
+													});
+											},
+											model.rolls)),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
 						}
 					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									'Roll: ',
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(model.roll),
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											'  Total: ',
-											_elm_lang$core$Basics$toString(
-												A3(
-													_elm_lang$core$List$foldl,
-													F2(
-														function (x, y) {
-															return x + y;
-														}),
-													0,
-													model.roll)))))),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
+				_1: {ctor: '[]'}
 			}));
 };
 var _jarcane$elm_dice$Main$view = function (model) {
