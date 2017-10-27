@@ -29,11 +29,13 @@ main =
 
 -- MODEL
 
+
 type alias Roll =
     { roll : List Int
     , total : Int
     , num : Int
-    , sides : Int }
+    , sides : Int
+    }
 
 
 type alias Model =
@@ -102,10 +104,13 @@ rollDice : String -> String -> Maybe (Random.Generator Roll)
 rollDice num sides =
     case ( String.toInt num, String.toInt sides ) of
         ( Ok num, Ok sides ) ->
-            let 
-                roll = Random.list num (Random.int 1 sides)
-                gen = Random.map (\l -> Roll l (List.foldl (+) 0 l) num sides) roll
-            in 
+            let
+                roll =
+                    Random.list num (Random.int 1 sides)
+
+                gen =
+                    Random.map (\l -> Roll l (List.foldl (+) 0 l) num sides) roll
+            in
                 Just gen
 
         _ ->
@@ -137,7 +142,7 @@ viewBody : Model -> Html Msg
 viewBody model =
     div [ style [ ( "padding", "2rem" ) ] ]
         [ Grid.grid []
-            [ Grid.cell [] 
+            [ Grid.cell [ Grid.size Grid.All 4 ]
                 [ numberField model 0 NewNum "Num" model.num
                 , numberField model 1 NewSides "Sides" model.sides
                 , Button.render Mdl
@@ -150,16 +155,26 @@ viewBody model =
                     , Button.disabled |> Options.when (not (model.error == Nothing))
                     ]
                     [ Icon.i "casino"
-                    , text "  Roll Dice" ]
+                    , text "  Roll Dice"
+                    ]
                 ]
-            , Grid.cell [] 
+            , Grid.cell [ Grid.size Grid.All 6 ]
                 [ Lists.ul []
-                    (List.map (\r -> Lists.li [] 
-                                        [ Lists.content [] [ text (format3 "{1}d{2}: {3}" (r.num, r.sides, r.roll)) ]
-                                        , Lists.content2 [] [ text (toString r.total) ]]) 
-                    model.rolls)]]
+                    (List.map
+                        (\r ->
+                            Lists.li []
+                                [ Lists.content []
+                                    [ text (format3 "{1}d{2}: {3}" ( r.num, r.sides, r.roll )) ]
+                                , Lists.content2 []
+                                    [ text (toString r.total) ]
+                                ]
+                        )
+                        model.rolls
+                    )
+                ]
+            ]
         ]
-        |> Material.Scheme.top 
+        |> Material.Scheme.top
 
 
 numberField : Model -> Int -> (String -> Msg) -> String -> String -> Html Msg
